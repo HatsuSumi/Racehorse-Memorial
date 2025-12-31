@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>去世的现役及退役赛马名录</title>
+    <link rel="icon" type="image/png" href="favicon/favicon-32x32.png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- 移动端遮罩层 -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- 移动端汉堡菜单按钮 -->
+    <button class="menu-toggle" id="menu-toggle">☰ 目录</button>
+
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>年份导航</h2>
+        </div>
+        
+        <div class="sidebar-content">
+            <ul class="year-list" id="year-nav">
+                <!-- 年份按钮由 JS 生成 -->
+            </ul>
+
+            <!-- 搜索功能区 -->
+            <div id="search-container" class="search-container">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="搜索..." autocomplete="off">
+                    <span id="search-count" class="search-count"></span>
+                </div>
+                <div class="search-options">
+                    <label class="checkbox-label" data-tooltip="只匹配“完整词”，不会命中词的一部分。例：搜 cat 不会命中 cats / scatter">
+                        <input type="checkbox" id="opt-whole-word"> 全词匹配
+                    </label>
+                    <label class="checkbox-label" data-tooltip="忽略英文字母大小写">
+                        <input type="checkbox" id="opt-ignore-case" checked> 忽略大小写
+                    </label>
+                    <label class="checkbox-label" data-tooltip="忽略平/片假名差异（平假名和片假名视为相同）">
+                        <input type="checkbox" id="opt-ignore-kana" checked> 忽略平/片假名
+                    </label>
+                    <label class="checkbox-label" data-tooltip="使用正则表达式进行搜索">
+                        <input type="checkbox" id="opt-regex"> 正则表达式
+                    </label>
+                </div>
+                <div class="search-shortcuts-hint">
+                    [Enter/↓] 下一个 [↑] 上一个
+                </div>
+                <div class="search-easter-egg">
+                    浏览器原生的<code>Ctrl+F</code>？不存在的，我选择重造轮子！
+                </div>
+            </div>
+            
+            <!-- 收录范围说明 (移入侧边栏) -->
+            <div class="scope-info-sidebar">
+                <h3>收录范围</h3>
+                <p>全球范围内的现役及退役赛马，无论是不是名马都收录，有被媒体报道的，能被搜索引擎搜索到的赛马。</p>
+            </div>
+
+            <!-- 参考文献区域 -->
+            <div id="references-container" class="references-section-sidebar"></div>
+        </div>
+
+        <div class="sidebar-footer">
+            <!-- 快速导航 (电梯按钮) -->
+            <div class="quick-nav">
+                <button class="nav-btn" id="btn-top" data-tooltip="回到顶部">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
+                </button>
+                <button class="nav-btn" id="btn-mid" data-tooltip="直达中部">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4 11h16v2H4zm0-4h16v2H4zm0 8h16v2H4z"/></svg>
+                </button>
+                <button class="nav-btn" id="btn-bot" data-tooltip="去到底部">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg>
+                </button>
+            </div>
+
+            <button class="theme-toggle" id="theme-toggle">
+                <span id="theme-icon">🌙</span>
+                <span id="theme-text">堕入黑暗</span>
+            </button>
+
+            <div class="personal-link">
+                我的<a href="https://hatsusumi.github.io/FinalTestamentProofILived/" target="_blank" rel="noopener noreferrer" class="personal-link-text">个人网站</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <header>
+            <h1 id="page-title">2025年去世的现役及退役赛马名录</h1>
+            <p class="subtitle-quote">“每一匹马都曾在赛场上留下过足迹，每一段生命都值得被记录。”</p>
+            <p class="subtitle-en" data-tooltip="愿它们在绿色的牧场安息">May they rest in green pastures.</p>
+        </header>
+
+        <!-- 移动端搜索框挂载点：JS 会把侧边栏的 #search-container 移动到这里 -->
+        <div id="mobile-search-host" class="mobile-search-host"></div>
+
+        <!-- 排序提示：根据年份配置动态更新 -->
+        <div id="sort-hint" class="sort-hint" aria-live="polite"></div>
+        
+        <div class="data-table-container">
+            <div id="table-wrapper">
+                <!-- 表格将在这里生成 -->
+                <div class="loading">正在加载数据...</div>
+            </div>
+        </div>
+
+        <footer class="site-footer" aria-label="页脚">
+            <p class="footer-about">
+                这是一个专注于记录和纪念年度去世赛马的纪念网站。<span class="footer-emphasis">我（没有们）</span>希望通过这个简洁、静谧的页面，为每一位赛马爱好者提供一个查阅和缅怀的空间。
+            </p>
+            <p class="footer-meta">
+                <a class="footer-link" href="https://github.com/REPLACE_ME/Racehorse-Memorial" target="_blank" rel="noopener noreferrer">Github</a>
+            </p>
+        </footer>
+    </main>
+
+    <!-- 模板区域 -->
+    <template id="sidebar-item-template">
+        <li class="year-item">
+            <button class="year-btn"></button>
+        </li>
+    </template>
+
+    <!-- 可视化入口（年份导航区域顶部） -->
+    <template id="viz-entry-template">
+        <li class="year-item viz-entry">
+            <a id="viz-link" class="year-btn viz-link" href="viz.html">数据可视化</a>
+        </li>
+    </template>
+
+    <template id="table-row-template">
+        <tr></tr>
+    </template>
+
+    <template id="table-cell-template">
+        <td></td>
+    </template>
+
+    <!-- 表格图片单元格模板 -->
+    <template id="table-photo-template">
+        <img class="thumbnail" alt="Photo" loading="lazy">
+    </template>
+
+    <template id="table-header-cell-template">
+        <th>
+            <button class="sort-header" type="button">
+                <span class="sort-label"></span>
+                <span class="sort-indicator" aria-hidden="true">
+                    <svg class="sort-arrow" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <!-- 默认朝上，降序通过 CSS 旋转 180deg -->
+                        <path d="M7.41 14.59 12 10l4.59 4.59L18 13.17l-6-6-6 6z"></path>
+                    </svg>
+                </span>
+            </button>
+        </th>
+    </template>
+
+    <template id="table-scroll-wrapper-template">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </template>
+
+    <!-- 表格内容富文本模板 -->
+    <template id="table-br-template"><br></template>
+    <template id="table-bold-template"><b></b></template>
+    <template id="genealogy-count-template"><span class="genealogy-count"></span></template>
+    <template id="record-metric-badge-template"><span class="record-metric-badge"></span></template>
+
+    <!-- 表格提示块模板 -->
+    <template id="table-loading-template">
+        <div class="loading">正在加载数据...</div>
+    </template>
+
+    <template id="table-empty-template">
+        <div class="loading">暂无数据</div>
+    </template>
+
+    <template id="table-error-template">
+        <div class="error">
+            <h3>加载失败</h3>
+            <p class="error-message"></p>
+        </div>
+    </template>
+
+    <!-- sort-hint（奖金汇率提示）模板：用于生成“ⓘ”Tooltip 触发器 -->
+    <template id="sort-hint-money-template">
+        <span class="sort-hint-inline">
+            <span class="sort-hint-text"></span><button type="button" class="sort-hint-info" aria-label="查看汇率说明" data-tooltip="">ⓘ</button>
+        </span>
+    </template>
+
+    <!-- 参考文献模板 -->
+    <template id="references-template">
+        <div class="references-root">
+            <h3 class="ref-title">参考文献</h3>
+            <div class="ref-content-wrapper" id="ref-wrapper">
+                <ul class="ref-list"></ul>
+                <div class="ref-expand-btn" role="button" tabindex="0" aria-label="展开或收起参考文献">
+                    <svg class="ref-arrow" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="ref-item-template">
+        <li class="ref-item">
+            <a class="ref-link" target="_blank" rel="noopener noreferrer"></a>
+            <span class="ref-text"></span>
+        </li>
+    </template>
+
+    <!-- 战绩排序弹窗模板 -->
+    <template id="record-sort-modal-template">
+        <div id="record-sort-modal" class="modal sort-modal" role="dialog" aria-modal="true" aria-label="战绩排序">
+            <div class="sort-modal-dialog">
+                <div class="sort-modal-header">
+                    <div class="sort-modal-title">战绩排序</div>
+                    <button type="button" class="sort-modal-close" data-action="close" aria-label="关闭">×</button>
+                </div>
+                <div class="sort-modal-body">
+                    <div class="sort-modal-desc">请选择排序规则：</div>
+                    <div class="sort-modal-options" id="record-sort-options"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="record-sort-option-template">
+        <button type="button" class="sort-option-btn"></button>
+    </template>
+
+    <!-- 图片模态框 (Lightbox) -->
+    <div id="image-modal" class="modal">
+        <span class="modal-close" id="modal-close">&times;</span>
+        <img class="modal-content" id="modal-img">
+    </div>
+
+    <!-- Tooltip 模板 -->
+    <template id="tooltip-template">
+        <div class="tooltip-container">
+            <div class="tooltip-content"></div>
+        </div>
+    </template>
+
+    <!-- 搜索高亮模板 -->
+    <template id="search-highlight-template">
+        <mark class="search-highlight"></mark>
+    </template>
+
+    <!-- 脚本引用 -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+/* 搜索容器 - 侧边栏适配 */
+.search-container {
+    background: rgba(255, 255, 255, 0.05); /* 半透明背景适应深色侧边栏 */
+    border-radius: 6px;
+    padding: 12px;
+    margin: 15px 0;
+    box-shadow: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 移动端被移动到主内容区时：改用主内容配色（避免白天模式白字看不见） */
+.search-container.is-in-main {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+}
+
+.search-container.is-in-main .search-icon {
+    color: rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .search-container.is-in-main .search-icon {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#search-input {
+    width: 100%;
+    padding: 8px 36px 8px 30px; /* 右侧留给计数，左侧留给图标 */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    font-size: 14px;
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--sidebar-text);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.search-container.is-in-main #search-input {
+    color: var(--text-color);
+    background: var(--bg-color);
+    border-color: var(--border-color);
+}
+
+#search-input.is-invalid {
+    border-color: rgba(231, 76, 60, 0.9);
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.25);
+}
+
+#search-input:focus {
+    border-color: var(--accent-color);
+    background: rgba(0, 0, 0, 0.4);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+}
+
+/* 错误态优先：即使 focus 也保持红色 */
+#search-input.is-invalid:focus {
+    border-color: rgba(231, 76, 60, 0.9);
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.25);
+}
+
+#search-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.search-container.is-in-main #search-input::placeholder {
+    color: rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .search-container.is-in-main #search-input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* 搜索结果计数 */
+.search-count {
+    position: absolute;
+    right: 8px;
+    font-size: 12px;
+    color: var(--sidebar-text);
+    opacity: 0.6;
+    background: transparent;
+    padding: 0;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-2px) scale(0.98);
+    transition: opacity var(--transition-fast), transform var(--transition-fast), color var(--transition-fast);
+}
+
+.search-container.is-in-main .search-count {
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.search-count.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.search-count.active {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.search-count.invalid {
+    color: rgba(231, 76, 60, 0.9);
+    font-weight: bold;
+}
+
+/* 搜索选项 (2x2 Grid) - 紧凑布局 */
+.search-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    justify-content: start;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 8px;
+}
+
+.search-container.is-in-main .search-options {
+    color: var(--text-color);
+    opacity: 0.75;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: color var(--transition-fast);
+    white-space: nowrap; /* 防止换行 */
+}
+
+.checkbox-label:hover {
+    color: var(--sidebar-text);
+}
+
+.search-container.is-in-main .checkbox-label:hover {
+    color: var(--text-color);
+}
+
+.checkbox-label input {
+    margin-right: 4px;
+    accent-color: var(--accent-color);
+    cursor: pointer;
+    width: 12px;
+    height: 12px;
+}
+
+/* 快捷键提示 - 极简 */
+.search-shortcuts-hint {
+    font-size: 11px;
+    color: var(--sidebar-text);
+    opacity: 0.55;
+    text-align: center;
+    margin-top: 0;
+    border-top: 1px solid rgba(127, 127, 127, 0.22);
+    padding-top: 6px;
+}
+
+.search-container.is-in-main .search-shortcuts-hint {
+    color: var(--text-color);
+    border-top: 1px solid var(--border-color);
+    opacity: 0.7;
+}
+
+.search-easter-egg {
+    font-size: 11px;
+    color: var(--sidebar-text);
+    opacity: 0.5;
+    text-align: center;
+    margin-top: 6px;
+    line-height: 1.35;
+}
+
+.search-container.is-in-main .search-easter-egg {
+    color: var(--text-color);
+    opacity: 0.65;
+}
+
+.search-easter-egg code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.95em;
+    color: var(--sidebar-text);
+    opacity: 0.85;
+}
+
+.search-container.is-in-main .search-easter-egg code {
+    color: var(--text-color);
+    opacity: 0.9;
+}
+
+/* 高亮样式保持不变 */
+mark.search-highlight {
+    background-color: rgba(255, 235, 59, 0.4);
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
+    box-shadow: 0 0 0 1px rgba(255, 193, 7, 0.3);
+}
+
+[data-theme="dark"] mark.search-highlight {
+    background-color: rgba(255, 235, 59, 0.25);
+    color: #ffd700;
+}
+
+mark.search-highlight.current {
+    background-color: #ff9800;
+    color: white;
+    box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.5);
+    z-index: 1;
+    position: relative;
+}

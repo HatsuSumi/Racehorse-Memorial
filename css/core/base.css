@@ -1,0 +1,39 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Microsoft YaHei", sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* =========================================================
+   Focus 样式（取消浏览器默认黑色聚焦边框，统一为主题色）
+   - 保留可见焦点（键盘可用性/无障碍）
+   ========================================================= */
+
+@supports selector(:focus-visible) {
+    :where(button, select, input, textarea):focus {
+        outline: none;
+    }
+
+    :where(button, select, input, textarea):focus-visible {
+        outline: 2px solid var(--accent-color);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+    }
+}
+
+@supports not selector(:focus-visible) {
+    :where(button, select, input, textarea):focus {
+        outline: 2px solid var(--accent-color);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+    }
+}

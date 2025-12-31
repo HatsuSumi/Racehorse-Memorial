@@ -1,0 +1,374 @@
+/* 侧边栏 (PC端在右侧) */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+    transition: transform 0.3s ease, background-color 0.3s;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-header h2 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    /* 增加平滑滚动 */
+    scroll-behavior: smooth;
+    /* Firefox 滚动条样式 */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+/* WebKit 滚动条美化 */
+.sidebar-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255,255,255,0.4);
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* 导航按钮 */
+.year-list {
+    list-style: none;
+}
+
+.year-item {
+    margin-bottom: 10px;
+}
+
+.year-btn {
+    width: 100%;
+    padding: 12px;
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--sidebar-text);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+    font-size: 1rem;
+    text-align: left;
+    padding-left: 20px;
+}
+
+/* 可视化入口（放在年份导航区） */
+.viz-link {
+    display: block;
+    text-decoration: none;
+}
+
+.viz-entry .viz-link {
+    background-color: rgba(255,255,255,0.08);
+}
+
+/* 注意：移动端常见“:hover 粘住”，hover 效果只对支持 hover 的设备启用 */
+@media (hover: hover) and (pointer: fine) {
+    .year-btn:hover {
+        background-color: var(--sidebar-hover);
+    }
+}
+
+.year-btn.active {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    font-weight: bold;
+}
+
+.year-btn.disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+    border-color: transparent;
+}
+
+.year-btn.disabled:hover {
+    background-color: transparent; /* 禁用状态悬停不变色 */
+}
+
+/* 主题切换按钮 */
+.theme-toggle {
+    width: 100%;
+    padding: 10px;
+    background-color: rgba(255,255,255,0.1);
+    border: none;
+    color: var(--sidebar-text);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+/* 快速导航 (电梯) */
+.quick-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 8px;
+}
+
+.nav-btn {
+    flex: 1;
+    padding: 8px;
+    background-color: rgba(255,255,255,0.1);
+    border: none;
+    color: var(--sidebar-text);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .nav-btn:hover {
+        background-color: rgba(255,255,255,0.2);
+        color: var(--accent-color);
+    }
+
+    .theme-toggle:hover {
+        background-color: rgba(255,255,255,0.2);
+    }
+}
+
+/* 个人链接 */
+.personal-link {
+    margin-top: 12px;
+    text-align: center;
+    color: var(--sidebar-text);
+}
+
+.personal-link-text {
+    display: inline-block;
+    position: relative;
+    color: inherit;
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding-bottom: 2px;
+    transition: color var(--transition-fast);
+}
+
+.personal-link-text::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-fast);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .personal-link-text:hover {
+        color: var(--accent-color);
+    }
+
+    .personal-link-text:hover::after {
+        transform: scaleX(1);
+    }
+}
+
+.personal-link-text:focus-visible {
+    color: var(--accent-color);
+    outline: 2px solid var(--accent-color);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+
+.personal-link-text:focus-visible::after {
+    transform: scaleX(1);
+}
+
+/* 主内容区域 (PC端主内容在左侧，给右侧留出空间) */
+.main-content {
+    flex: 1;
+    margin-right: var(--sidebar-width);
+    margin-left: 0;
+    padding: 40px;
+    width: calc(100% - var(--sidebar-width));
+    transition: margin-right 0.3s, width 0.3s;
+}
+
+/* 移动端汉堡菜单按钮 (默认隐藏) */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1100;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* 遮罩层 */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 900;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+header {
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+/* 副标题样式 */
+.subtitle-quote {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin-top: 10px;
+    font-style: normal;
+    opacity: 0.8;
+}
+
+.subtitle-en {
+    font-size: 1rem;
+    color: var(--accent-color);
+    margin-top: 5px;
+    font-style: italic;
+    opacity: 0.9;
+}
+
+/* 页脚 */
+.site-footer {
+    display: none;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-color);
+    opacity: 0.85;
+}
+
+/* 表格首次渲染完成后再显示页脚，避免加载阶段“闪现” */
+html.app-ready .site-footer {
+    display: block;
+}
+
+.site-footer .footer-about {
+    max-width: 860px;
+    margin: 0 auto 10px;
+    line-height: 1.75;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.site-footer .footer-emphasis {
+    display: inline-block;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent-color) 22%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent);
+    color: var(--text-color);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.site-footer .footer-meta {
+    text-align: center;
+    font-size: 0.85rem;
+    opacity: 0.85;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.site-footer .footer-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 2px; /* 给下划线留空间 */
+}
+
+.site-footer .footer-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-fast);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .site-footer .footer-link:hover {
+        color: color-mix(in srgb, var(--accent-color) 80%, black);
+    }
+
+    .site-footer .footer-link:hover::after {
+        transform: scaleX(1);
+    }
+}
+
+.site-footer .footer-link:focus-visible {
+    color: color-mix(in srgb, var(--accent-color) 80%, black);
+}
+
+.site-footer .footer-link:focus-visible::after {
+    transform: scaleX(1);
+}

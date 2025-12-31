@@ -1,0 +1,33 @@
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .sidebar {
+        right: auto;
+        left: 0; /* 移动端在左侧 */
+        transform: translateX(-100%); /* 默认隐藏到左侧屏幕外 */
+        width: 260px;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    }
+
+    .sidebar.active {
+        transform: translateX(0); /* 滑出 */
+    }
+
+    .main-content {
+        margin-right: 0;
+        width: 100%;
+        padding: 20px;
+        padding-top: 70px; /* 留出顶部汉堡按钮的空间 */
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    /* 移动端：header 下方的搜索框间距 */
+    .mobile-search-host {
+        margin: 10px 0 14px;
+    }
+}

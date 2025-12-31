@@ -1,0 +1,128 @@
+/* ================= Tooltip 样式 (TooltipService) ================= */
+
+/* 嵌套在 Tooltip 内部的触发器使用父元素的文字颜色 */
+.tooltip-container .tooltip-trigger {
+    color: inherit;
+}
+
+.tooltip-container .tooltip-trigger:hover {
+    opacity: 0.8;
+}
+
+/* Tooltip容器 */
+.tooltip-container {
+    position: fixed;
+    max-width: 300px;
+    max-height: 80vh;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: white;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    pointer-events: auto;
+    opacity: 0;
+    white-space: pre-line;
+    word-wrap: break-word;
+    overflow-y: auto;
+}
+
+/* Tooltip显示状态 */
+.tooltip-container.show {
+    opacity: 1;
+}
+
+/* Tooltip内容 */
+.tooltip-content {
+    margin: 0;
+}
+
+.tooltip-content strong {
+    font-weight: 600;
+}
+
+.tooltip-content br {
+    line-height: 1.6;
+}
+
+/* Tooltip滚动条样式 */
+.tooltip-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tooltip-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.tooltip-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.tooltip-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* 动画1：scale-fade（缩放淡入） */
+.tooltip-anim-scale-fade {
+    transform: scale(0.9);
+    transition: opacity var(--tooltip-anim-scale-fade-opacity-duration), transform var(--tooltip-anim-scale-fade-transform-duration);
+}
+
+.tooltip-anim-scale-fade.show {
+    transform: scale(1);
+}
+
+/* 动画2：slide-up（上滑淡入） */
+.tooltip-anim-slide-up {
+    transform: translateY(10px);
+    transition: opacity var(--tooltip-anim-slide-up-opacity-duration), transform var(--tooltip-anim-slide-up-transform-duration);
+}
+
+.tooltip-anim-slide-up.show {
+    transform: translateY(0);
+}
+
+/* 动画3：slide-down（下滑淡入） */
+.tooltip-anim-slide-down {
+    transform: translateY(-10px);
+    transition: opacity var(--tooltip-anim-slide-down-opacity-duration), transform var(--tooltip-anim-slide-down-transform-duration);
+}
+
+.tooltip-anim-slide-down.show {
+    transform: translateY(0);
+}
+
+/* 动画4：bounce（弹跳进入） */
+.tooltip-anim-bounce {
+    transform: scale(0.3);
+    transition: opacity var(--tooltip-anim-bounce-opacity-duration), transform var(--tooltip-anim-bounce-transform-duration) cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.tooltip-anim-bounce.show {
+    transform: scale(1);
+}
+
+/* 动画5：rotate-fade（旋转淡入） */
+.tooltip-anim-rotate-fade {
+    transform: rotate(-5deg) scale(0.9);
+    transition: opacity var(--tooltip-anim-rotate-fade-opacity-duration), transform var(--tooltip-anim-rotate-fade-transform-duration);
+}
+
+.tooltip-anim-rotate-fade.show {
+    transform: rotate(0deg) scale(1);
+}
+
+/* 动画6：blur-fade（模糊淡入） */
+.tooltip-anim-blur-fade {
+    filter: blur(4px);
+    transform: scale(0.95);
+    transition: opacity var(--tooltip-anim-blur-fade-opacity-duration), filter var(--tooltip-anim-blur-fade-filter-duration), transform var(--tooltip-anim-blur-fade-transform-duration);
+}
+
+.tooltip-anim-blur-fade.show {
+    filter: blur(0);
+    transform: scale(1);
+}

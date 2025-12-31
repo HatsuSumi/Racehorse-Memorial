@@ -1,0 +1,351 @@
+/* 数据可视化页面：独立布局（不依赖 sidebar） */
+body.viz-page {
+    display: block;
+    min-height: 100vh;
+}
+
+.viz-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 28px 28px 36px;
+}
+
+.viz-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.viz-header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    min-width: 0;
+}
+
+.viz-back {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.viz-title {
+    font-size: 1.6rem;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.viz-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.viz-year {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.viz-label {
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+/* 自定义下拉菜单 */
+.custom-select {
+    position: relative;
+    width: 120px; /* 根据年份文字长度适度固定 */
+    font-size: 0.95rem;
+}
+
+.select-trigger {
+    appearance: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.select-trigger:hover {
+    background-color: var(--row-hover);
+    border-color: var(--accent-color);
+}
+
+.select-trigger:focus-visible {
+    outline: 2px solid var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.arrow {
+    display: inline-block;
+    width: 0.6em;
+    height: 0.6em;
+    margin-left: 8px;
+    background-color: currentColor;
+    clip-path: polygon(10% 35%, 50% 75%, 90% 35%);
+    transition: transform 0.3s ease;
+}
+
+/* 展开状态：箭头旋转 */
+.custom-select.open .arrow {
+    transform: rotate(180deg);
+}
+
+.select-options {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    margin: 0;
+    padding: 6px 0;
+    list-style: none;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    z-index: 100;
+    
+    /* 动画初始状态 */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.98);
+    transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+                transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+                visibility 0.25s;
+    transform-origin: top center;
+}
+
+/* 展开状态：显示列表 */
+.custom-select.open .select-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.select-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+    color: var(--text-color);
+}
+
+.select-option:hover,
+.select-option:focus {
+    background-color: var(--row-hover);
+    color: var(--accent-color);
+    outline: none;
+}
+
+.select-option[aria-selected="true"] {
+    background-color: var(--row-hover);
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.viz-theme-toggle {
+    width: auto;
+    padding: 8px 10px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .viz-theme-toggle:hover {
+        background-color: var(--row-hover);
+    }
+}
+
+.viz-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.viz-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 14px 14px 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+.viz-card.viz-card-full {
+    grid-column: 1 / -1;
+}
+
+.viz-card.viz-card-full .viz-card-body {
+    min-height: 320px;
+}
+
+.viz-card.viz-card-full .viz-chart {
+    height: 320px;
+}
+
+.viz-card-title {
+    font-size: 1.05rem;
+    color: var(--primary-color);
+    margin: 0 0 10px;
+}
+
+.viz-card-body {
+    min-height: 260px;
+}
+
+.viz-chart {
+    width: 100%;
+    height: 260px;
+}
+
+.viz-chart-note {
+    margin: 10px 2px 0;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: var(--text-color);
+    opacity: 0.78;
+}
+
+.viz-note-trigger {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--accent-color);
+    cursor: help;
+    font: inherit;
+    padding: 0 1px;
+    line-height: 1;
+    opacity: 0.9;
+    display: inline-block;
+    vertical-align: super;
+    font-size: 0.86em;
+    position: relative;
+    top: -0.15em;
+}
+
+.viz-note-trigger:hover {
+    opacity: 1;
+}
+
+/* 统计卡片样式 */
+.viz-stats-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.stats-item {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    background: var(--bg-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stats-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.stats-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.stats-item-label {
+    font-size: 0.95rem;
+    color: var(--text-color);
+    opacity: 0.85;
+    margin-bottom: 6px;
+}
+
+.stats-item-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    margin-bottom: 8px;
+}
+
+.stats-item-detail {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    line-height: 1.6;
+}
+
+.stats-detail-line {
+    margin: 4px 0;
+}
+
+.stats-detail-line strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.stats-note {
+    margin: 8px 0 0 0;
+    padding: 8px 12px;
+    background: var(--bg-color);
+    border-left: 3px solid var(--accent-color);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text-color);
+    opacity: 0.85;
+    border-radius: 4px;
+}
+
+@media (max-width: 900px) {
+    .viz-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* 移动端：只固定图表区域高度；card-body 需要自适应以容纳"说明"文字 */
+    .viz-card-body {
+        min-height: 280px;
+        height: auto;
+    }
+
+    .viz-chart {
+        height: 280px;
+    }
+    
+    .stats-item {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .stats-item-value {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .viz-main {
+        padding: 18px 14px 26px;
+    }
+
+    .viz-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .viz-title {
+        font-size: 1.4rem;
+    }
+}
+

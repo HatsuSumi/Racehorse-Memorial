@@ -1,0 +1,182 @@
+/* 参考文献区域 (侧边栏版) */
+.references-section-sidebar {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    text-align: left;
+    font-size: 0.85rem;
+    position: relative;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+
+    /* 添加淡入淡出过渡 */
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* 隐藏状态 */
+.references-section-sidebar.fade-out {
+    opacity: 0;
+}
+
+.ref-title {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    opacity: 0.9;
+}
+
+.ref-content-wrapper {
+    max-height: 80px; /* 默认显示高度 */
+    overflow: hidden; /* 关键：隐藏超出部分 */
+    position: relative;
+    /* 优化动画曲线，使用 ease-in-out 让开始和结束更平滑 */
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ref-content-wrapper.expanded {
+    max-height: 400px; /* 限制整个容器的高度 */
+    padding-bottom: 0;
+    transition: max-height 0.6s ease-in-out;
+}
+
+/* 核心：只让列表滚动 */
+.ref-content-wrapper.expanded .ref-list {
+    max-height: 360px; /* 留出底部空间给箭头 */
+    overflow-y: auto;
+    padding-bottom: 40px; /* 确保最后一行内容能滚出来，不被箭头挡住 */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--accent-color) transparent;
+}
+
+/* WebKit 滚动条美化 */
+.ref-content-wrapper.expanded .ref-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.ref-content-wrapper.expanded .ref-list::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 2px;
+}
+
+/* 遮罩渐变效果 */
+.ref-content-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(18, 18, 18, 0), rgba(18, 18, 18, 1));
+    pointer-events: none;
+    /* 遮罩层的淡入淡出动画 */
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    z-index: 5;
+}
+
+/* 展开时隐藏遮罩 */
+.ref-content-wrapper.expanded::after {
+    opacity: 0;
+    transition: opacity 0.2s ease; /* 消失快一点 */
+}
+
+.ref-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+}
+
+.ref-item {
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    word-break: break-all;
+    color: rgba(255,255,255,0.6);
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ref-content-wrapper.expanded .ref-item {
+    white-space: normal;
+}
+
+.ref-item a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+
+    /* 动态下划线效果 */
+    background: linear-gradient(to right, var(--accent-color), var(--accent-color)) no-repeat;
+    background-position: left bottom;
+    background-size: 0 1px; /* 初始宽度0, 高度1px */
+    transition: background-size 0.4s ease-out, color 0.3s;
+}
+
+.ref-item a:hover {
+    color: var(--accent-color); /* 悬停变蓝 */
+    background-size: 100% 1px; /* 下划线宽度从0变到100% */
+}
+
+/* 箭头按钮 - 位于最上层 */
+.ref-expand-btn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30px; /* 明确点击区域高度 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--accent-color); /* 使用强调色 */
+    transition: color 0.2s, background-color 0.2s;
+    z-index: 10; /* 确保在遮罩层之上 */
+    background: rgba(0,0,0,0.1); /* 极其微弱的背景增加可点击感 */
+}
+
+.ref-expand-btn:hover {
+    color: white;
+    background-color: rgba(255,255,255,0.05);
+}
+
+.ref-arrow {
+    display: block;
+    width: 24px; /* 放大箭头 */
+    height: 24px;
+    transition: transform 0.3s;
+    transform-origin: center center;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5)); /* 加点阴影防止背景太亮看不清 */
+}
+
+/* 展开状态下箭头翻转 */
+.ref-content-wrapper.expanded .ref-expand-btn .ref-arrow {
+    transform: rotate(180deg);
+}
+
+/* 侧边栏底部的收录范围说明 */
+.scope-info-sidebar {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: rgba(0,0,0,0.2); /* 半透明深色背景 */
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7); /* 柔和的白色文字 */
+    line-height: 1.6;
+    border-left: 3px solid var(--accent-color);
+}
+
+.scope-info-sidebar h3 {
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    opacity: 0.9;
+}
+
+.scope-info-sidebar p {
+    margin: 0;
+}

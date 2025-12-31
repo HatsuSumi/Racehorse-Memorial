@@ -1,0 +1,52 @@
+:root {
+    /* Tooltip 动画变量 */
+    --tooltip-anim-scale-fade-opacity-duration: 0.2s;
+    --tooltip-anim-scale-fade-transform-duration: 0.2s;
+    --tooltip-anim-slide-up-opacity-duration: 0.3s;
+    --tooltip-anim-slide-up-transform-duration: 0.3s;
+    --tooltip-anim-slide-down-opacity-duration: 0.3s;
+    --tooltip-anim-slide-down-transform-duration: 0.3s;
+    --tooltip-anim-bounce-opacity-duration: 0.3s;
+    --tooltip-anim-bounce-transform-duration: 0.5s;
+    --tooltip-anim-rotate-fade-opacity-duration: 0.3s;
+    --tooltip-anim-rotate-fade-transform-duration: 0.3s;
+    --tooltip-anim-blur-fade-opacity-duration: 0.3s;
+    --tooltip-anim-blur-fade-filter-duration: 0.3s;
+    --tooltip-anim-blur-fade-transform-duration: 0.3s;
+
+    /* 全局过渡变量 */
+    --transition-fast: 0.3s ease;
+
+    /* 浅色主题 (默认) */
+    --primary-color: #2c3e50;
+    --accent-color: #3498db;
+    --text-color: #333;
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --border-color: #eee;
+    --header-bg: #2c3e50;
+    --header-text: #ffffff;
+    --row-hover: #e8f4fd;
+    --row-alt: #f8f9fa;
+    --sidebar-bg: #2c3e50;
+    --sidebar-text: #ffffff;
+    --sidebar-width: 240px;
+    --sidebar-hover: rgba(255,255,255,0.1);
+}
+
+[data-theme="dark"] {
+    /* 深色主题 */
+    --primary-color: #ecf0f1;
+    --accent-color: #3498db;
+    --text-color: #e0e0e0;
+    --bg-color: #1a1a1a;
+    --card-bg: #2d2d2d;
+    --border-color: #404040;
+    --header-bg: #1f1f1f;
+    --header-text: #ecf0f1;
+    --row-hover: #3a3a3a;
+    --row-alt: #252525;
+    --sidebar-bg: #121212;
+    --sidebar-text: #e0e0e0;
+    --sidebar-hover: rgba(255,255,255,0.1);
+}

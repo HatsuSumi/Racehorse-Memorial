@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据可视化 - 去世的现役及退役赛马名录</title>
+    <link rel="icon" type="image/png" href="favicon/favicon-32x32.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/features/viz.css">
+</head>
+<body class="viz-page">
+    <main class="viz-main" aria-label="数据可视化页面">
+        <header class="viz-header">
+            <div class="viz-header-left">
+                <a class="viz-back" href="index.html" aria-label="返回名录页面">← 返回名录</a>
+                <h1 class="viz-title">数据可视化</h1>
+            </div>
+
+            <div class="viz-controls" aria-label="可视化控制区">
+                <div class="viz-year">
+                    <span class="viz-label">年份</span>
+                    <div id="viz-year-select-container" class="custom-select">
+                        <button type="button" class="select-trigger" aria-haspopup="listbox" aria-expanded="false" id="viz-year-trigger">
+                            <span class="selected-value"></span>
+                            <span class="arrow"></span>
+                        </button>
+                        <ul class="select-options" role="listbox" aria-labelledby="viz-year-trigger" hidden></ul>
+                    </div>
+                </div>
+
+                <button class="theme-toggle viz-theme-toggle" id="theme-toggle" type="button">
+                    <span id="theme-icon">🌙</span>
+                    <span id="theme-text">堕入黑暗</span>
+                </button>
+            </div>
+        </header>
+
+        <section id="viz-grid" class="viz-grid" aria-label="图表区域"></section>
+
+    </main>
+
+    <!-- 模板：图表卡片 -->
+    <template id="viz-chart-card-template">
+        <article class="viz-card">
+            <h2 class="viz-card-title"></h2>
+            <div class="viz-card-body">
+                <div class="viz-chart" role="img"></div>
+                <p class="viz-chart-note" hidden></p>
+            </div>
+        </article>
+    </template>
+
+    <!-- 模板：统计卡片 -->
+    <template id="viz-stats-card-template">
+        <article class="viz-stats-card viz-card">
+            <h2 class="viz-stats-card-title viz-card-title"></h2>
+            <div class="viz-stats-card-body"></div>
+        </article>
+    </template>
+
+    <!-- 模板：统计项 -->
+    <template id="viz-stats-item-template">
+        <div class="stats-item">
+            <div class="stats-item-content">
+                <div class="stats-item-label"></div>
+                <div class="stats-item-value"></div>
+                <div class="stats-item-detail"></div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 模板：统计详情行 -->
+    <template id="stats-detail-line-template">
+        <p class="stats-detail-line">
+            <strong></strong>
+        </p>
+    </template>
+
+    <!-- 模板：统计说明文本 -->
+    <template id="stats-note-template">
+        <p class="stats-note"></p>
+    </template>
+
+    <!-- 模板：年份下拉选项 -->
+    <template id="viz-year-option-template">
+        <li role="option" class="select-option" tabindex="-1"></li>
+    </template>
+
+    <!-- 模板：说明（ⓘ Tooltip 触发器） -->
+    <template id="viz-note-trigger-template">
+        说明：该图为多因素<button type="button" class="viz-note-trigger tooltip-trigger" aria-label="查看多因素说明" data-tooltip="">ⓘ</button>计数，同一匹马可能同时计入多个死因标签，因此总和可能大于马匹总数。
+    </template>
+
+    <!-- Tooltip 模板（复用全站 TooltipService） -->
+    <template id="tooltip-template">
+        <div class="tooltip-container">
+            <div class="tooltip-content"></div>
+        </div>
+    </template>
+
+    <!-- ECharts (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script type="module" src="js/pages/viz.js"></script>
+</body>
+</html>
+
