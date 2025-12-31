@@ -1,8 +1,10 @@
 # 去世的现役及退役赛马名录 (Racehorse Memorial Directory)
 
-> “每一匹马都曾在赛场上留下过足迹，每一段生命都值得被记录。”
+> "每一匹马都曾在赛场上留下过足迹，每一段生命都值得被记录。"
 
 这是一个专注于记录和纪念年度去世赛马的纪念网站。我（没有们）希望通过这个简洁、静谧的页面，为每一位赛马爱好者提供一个查阅和缅怀的空间。
+
+**🌐 在线访问**：[https://hatsusumi.github.io/Racehorse-Memorial/](https://hatsusumi.github.io/Racehorse-Memorial/)
 
 - **当前收录年份**：2025年
 - **收录范围**：全球范围内的现役及退役赛马，无论是不是名马都收录，有被媒体报道的，能被搜索引擎搜索到的赛马。
@@ -70,8 +72,7 @@ Racehorse-Memorial/
 │   │   └── responsive.css      # 移动端适配
 │   └── style.css               # 样式入口文件
 ├── data/
-│   ├── 2025.json               # 2025年数据源
-│   └── 2026.json               # 2026年数据源
+│   └── 2025.json               # 2025年数据源
 ├── favicon/                    # 站点图标
 ├── images/                     # 马匹图片资源 (按年份分类)
 ├── js/
@@ -107,6 +108,7 @@ Racehorse-Memorial/
 │   └── app.js                  # 应用入口与初始化
 ├── tools/
 │   ├── convert.py              # Excel/CSV 转 JSON 工具
+│   ├── compare_json_xlsx.py    # JSON 与 XLSX 数据对比工具
 │   └── 2025 Racehorse Deaths (Active & Retired).xlsx  # 原始数据
 ├── index.html                  # 页面入口
 └── README.md                   # 项目说明
@@ -116,31 +118,31 @@ Racehorse-Memorial/
 
 ### 文件统计
 
-- **总文件数**：37 个
+- **总文件数**：38 个
   - JavaScript 文件：20 个
   - CSS 文件：11 个
   - HTML 文件：2 个
+  - Python 脚本：2 个
   - JSON 数据：1 个
-  - Python 脚本：1 个
   - Markdown 文档：1 个
   - 批处理脚本：1 个
 
 ### 代码规模
 
-- **代码总行数**：7,268 行（不含空行、注释）
-  - JavaScript：3,147 行（43.3%）
-  - JSON：2,150 行（29.6%）
-  - CSS：1,458 行（20.1%）
-  - HTML：288 行（4.0%）
-  - Python：162 行（2.2%）
-  - Batch：63 行（0.9%）
+- **代码总行数**：7,429 行（不含空行、注释）
+  - JavaScript：3,159 行（42.5%）
+  - JSON：2,149 行（28.9%）
+  - CSS：1,469 行（19.8%）
+  - HTML：291 行（3.9%）
+  - Python：298 行（4.0%）
+  - Batch：63 行（0.8%）
 
-- **字符总数**：240,245 字符（不含注释）
-  - JavaScript：130,084 字符（54.1%）
-  - JSON：58,496 字符（24.3%）
-  - CSS：33,168 字符（13.8%）
-  - HTML：12,377 字符（5.2%）
-  - Python：4,667 字符（1.9%）
+- **字符总数**：245,448 字符（不含注释）
+  - JavaScript：130,557 字符（53.2%）
+  - JSON：58,677 字符（23.9%）
+  - CSS：33,419 字符（13.6%）
+  - HTML：12,500 字符（5.1%）
+  - Python：8,842 字符（3.6%）
   - Batch：1,453 字符（0.6%）
 
 > 💡 **数据来源**：以上数据基于项目内的 `project_stats.py` 统计生成

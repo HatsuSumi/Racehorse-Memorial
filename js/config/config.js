@@ -75,19 +75,6 @@ export const CONFIG = {
             "https://en.wikipedia.org/wiki/Category:2025_animal_deaths",
             "https://ko.wikipedia.org/wiki/%EB%B6%84%EB%A5%98:2025%EB%85%84_%EC%A3%BD%EC%9D%80_%EA%B2%BD%EC%A3%BC%EB%A7%88",
             "以及直接在Google搜索site:www.jra.go.jp/news (死亡 OR 永眠 OR 死去 OR 予後不良 OR R.I.P OR 天国 OR 冥福) after:2025-01-01 before:2026-01-01的结果"
-        ],
-        "2026": [
-            "https://dir.netkeiba.com/keibamatome/detail.html?no=4630",
-            "https://meiba.jp/news/list/2/all",
-            "https://ja.wikipedia.org/wiki/2025%E5%B9%B4%E3%81%AE%E6%97%A5%E6%9C%AC%E7%AB%B6%E9%A6%AC",
-            "https://mag-p.com/2451/",
-            "https://zh.wikipedia.org/wiki/Category:2025%E5%B9%B4%E9%80%9D%E4%B8%96%E7%9A%84%E5%8B%95%E7%89%A9",
-            "https://en.wikipedia.org/wiki/Category:2025_racehorse_deaths",
-            "https://sv.wikipedia.org/wiki/Kategori:H%C3%A4star_avlidna_2025",
-            "https://fr.wikipedia.org/wiki/Cat%C3%A9gorie:Animal_mort_en_2025",
-            "https://en.wikipedia.org/wiki/Category:2025_animal_deaths",
-            "https://ko.wikipedia.org/wiki/%EB%B6%84%EB%A5%98:2025%EB%85%84_%EC%A3%BD%EC%9D%80_%EA%B2%BD%EC%A3%BC%EB%A7%88",
-            "以及直接在Google搜索site:www.jra.go.jp/news (死亡 OR 永眠 OR 死去 OR 予後不良 OR R.I.P OR 天国 OR 冥福) after:2025-01-01 before:2026-01-01的结果"
         ]
     },
     // 参考文献默认显示的条数阈值

@@ -2,7 +2,7 @@
 """对比 JSON 和 XLSX 文件的字段内容是否完全一致。
 
 功能：
-    1. 读取 data/2025 copy.json
+    1. 读取 data/2025.json
     2. 读取 tools/2025 Racehorse Deaths (Active & Retired).xlsx
     3. 逐行对比每个字段的值是否一致
     4. 输出所有不一致的地方
@@ -22,7 +22,7 @@ from pathlib import Path
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-JSON_PATH = ROOT / "data" / "2025 copy.json"
+JSON_PATH = ROOT / "data" / "2025.json"
 EXCEL_PATH = ROOT / "tools" / "2025 Racehorse Deaths (Active & Retired).xlsx"
 
 
