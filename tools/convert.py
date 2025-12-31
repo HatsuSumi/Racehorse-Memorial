@@ -200,12 +200,14 @@ def convert():
                 for old_record in old_data:
                     serial = old_record.get('序号')
                     if serial:
+                        # 统一转换为字符串类型，避免类型不匹配
+                        serial_key = str(serial)
                         preserved = {}
                         for field in fields_to_preserve:
                             if field in old_record:
                                 preserved[field] = old_record[field]
                         if preserved:
-                            preserved_fields[serial] = preserved
+                            preserved_fields[serial_key] = preserved
                 
                 if preserved_fields:
                     print(f"  - 找到 {len(preserved_fields)} 条记录包含需要保留的字段")
@@ -215,9 +217,12 @@ def convert():
         # 合并保留的字段到新数据
         for record in data:
             serial = record.get('序号')
-            if serial and serial in preserved_fields:
-                for field, value in preserved_fields[serial].items():
-                    record[field] = value
+            if serial:
+                # 统一转换为字符串类型进行匹配
+                serial_key = str(serial)
+                if serial_key in preserved_fields:
+                    for field, value in preserved_fields[serial_key].items():
+                        record[field] = value
         
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)

@@ -109,6 +109,7 @@ Racehorse-Memorial/
 ├── tools/
 │   ├── convert.py              # Excel/CSV 转 JSON 工具
 │   ├── compare_json_xlsx.py    # JSON 与 XLSX 数据对比工具
+│   ├── rename_images.py        # 根据 JSON 序号重命名图片工具
 │   └── 2025 Racehorse Deaths (Active & Retired).xlsx  # 原始数据
 ├── index.html                  # 页面入口
 └── README.md                   # 项目说明
@@ -118,31 +119,31 @@ Racehorse-Memorial/
 
 ### 文件统计
 
-- **总文件数**：38 个
+- **总文件数**：39 个
   - JavaScript 文件：20 个
   - CSS 文件：11 个
+  - Python 脚本：3 个
   - HTML 文件：2 个
-  - Python 脚本：2 个
   - JSON 数据：1 个
   - Markdown 文档：1 个
   - 批处理脚本：1 个
 
 ### 代码规模
 
-- **代码总行数**：7,429 行（不含空行、注释）
-  - JavaScript：3,159 行（42.5%）
-  - JSON：2,149 行（28.9%）
-  - CSS：1,469 行（19.8%）
-  - HTML：291 行（3.9%）
-  - Python：298 行（4.0%）
+- **代码总行数**：7,703 行（不含空行、注释）
+  - JavaScript：3,150 行（40.9%）
+  - JSON：2,245 行（29.1%）
+  - CSS：1,469 行（19.1%）
+  - Python：485 行（6.3%）
+  - HTML：291 行（3.8%）
   - Batch：63 行（0.8%）
 
-- **字符总数**：245,448 字符（不含注释）
-  - JavaScript：130,557 字符（53.2%）
-  - JSON：58,677 字符（23.9%）
-  - CSS：33,419 字符（13.6%）
-  - HTML：12,500 字符（5.1%）
-  - Python：8,842 字符（3.6%）
+- **字符总数**：252,180 字符（不含注释）
+  - JavaScript：130,187 字符（51.6%）
+  - JSON：60,812 字符（24.1%）
+  - CSS：33,419 字符（13.3%）
+  - Python：13,809 字符（5.5%）
+  - HTML：12,500 字符（5.0%）
   - Batch：1,453 字符（0.6%）
 
 > 💡 **数据来源**：以上数据基于项目内的 `project_stats.py` 统计生成

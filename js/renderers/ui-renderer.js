@@ -415,15 +415,7 @@ export function renderTable(data, year, sortState = null) {
                 if (hasPhoto) {
                     // 尝试加载马匹特定图片
                     const englishName = getEnglishName(row['马名']);
-                    const jsonSerial = row['序号'];
-                    
-                    // 检查是否有自定义序号覆盖
-                    const yearOverrides = CONFIG.imageSerialOverride[year];
-                    const imageSerial = (yearOverrides && yearOverrides[jsonSerial] !== undefined)
-                        ? yearOverrides[jsonSerial]
-                        : jsonSerial;
-                    
-                    const serial = String(imageSerial).padStart(2, '0');
+                    const serial = String(row['序号']).padStart(2, '0');
                     const imgPath = `images/${year}/${serial}_${englishName}.jpg`;
                     img.src = imgPath;
 
