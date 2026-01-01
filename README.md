@@ -1,4 +1,4 @@
-# 去世的现役及退役赛马名录 (Racehorse Memorial Directory)
+# 去世的现役与退役赛马名录 (Racehorse Memorial Directory)
 
 > "每一匹马都曾在赛场上留下过足迹，每一段生命都值得被记录。"
 
@@ -7,7 +7,7 @@
 **🌐 在线访问**：[https://hatsusumi.github.io/Racehorse-Memorial/](https://hatsusumi.github.io/Racehorse-Memorial/)
 
 - **当前收录年份**：2025年
-- **收录范围**：全球范围内的现役及退役赛马，无论是不是名马都收录，有被媒体报道的，能被搜索引擎搜索到的赛马。
+- **收录范围**：全球范围内的现役与退役赛马，无论是不是名马都收录，有被媒体报道的，能被搜索引擎搜索到的赛马。
 
 ## ✨ 功能特性 (Features)
 

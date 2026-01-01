@@ -135,7 +135,7 @@ function switchYear(year) {
     UIRenderer.updateVizLinkYear(year);
     
     // 更新标题
-    UIRenderer.dom.pageTitle.textContent = `${year}年去世的现役及退役赛马名录`;
+    UIRenderer.dom.pageTitle.textContent = `${year}年去世的现役与退役赛马名录`;
     
     // 更新参考文献 (带淡出效果)
     const refContainer = UIRenderer.dom.referencesContainer;
