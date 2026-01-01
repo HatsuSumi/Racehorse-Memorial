@@ -372,6 +372,7 @@ function computeTimeStats(rows, year) {
         return {
             maxDeathsInOneDay: null,
             maxDeathsInOneWeek: null,
+            longestConsecutive: null,
             longestGap: null,
             avgInterval: avgInterval
         };
@@ -408,10 +409,62 @@ function computeTimeStats(rows, year) {
         }
     }
     
-    // 3. 最长间隔
+    // 3. 最长连续有马匹去世天数
+    let maxConsecutiveDays = 0;
+    let maxConsecutiveRange = null;
+    
+    for (let i = 0; i < preciseDates.length - 1; i++) {
+        const current = preciseDates[i];
+        const next = preciseDates[i + 1];
+        const gapMs = next.getTime() - current.getTime();
+        const gapDays = Math.floor(gapMs / (1000 * 60 * 60 * 24));
+        
+        // 如果间隔为1天（连续），则计算连续天数
+        if (gapDays === 1) {
+            let consecutiveStart = current;
+            let consecutiveEnd = next;
+            let j = i + 1;
+            
+            // 继续向后查找连续日期
+            while (j < preciseDates.length - 1) {
+                const curr = preciseDates[j];
+                const nxt = preciseDates[j + 1];
+                const gap = Math.floor((nxt.getTime() - curr.getTime()) / (1000 * 60 * 60 * 24));
+                if (gap === 1) {
+                    consecutiveEnd = nxt;
+                    j++;
+                } else {
+                    break;
+                }
+            }
+            
+            // 计算连续天数（包含首尾两天）
+            const consecutiveDays = Math.floor((consecutiveEnd.getTime() - consecutiveStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+            
+            if (consecutiveDays > maxConsecutiveDays) {
+                maxConsecutiveDays = consecutiveDays;
+                maxConsecutiveRange = { start: consecutiveStart, end: consecutiveEnd };
+            }
+            
+            // 跳过已处理的日期
+            i = j;
+        }
+    }
+    
+    // 4. 最长无马匹去世间隔
     let maxGapDays = 0;
     let maxGapRange = null;
     
+    // 检查从年初到第一个去世日期的间隔
+    const yearStart = new Date(year, 0, 1); // 1月1日
+    const firstDate = preciseDates[0];
+    const gapFromStart = Math.floor((firstDate.getTime() - yearStart.getTime()) / (1000 * 60 * 60 * 24)) - 1;
+    if (gapFromStart > maxGapDays) {
+        maxGapDays = gapFromStart;
+        maxGapRange = { start: null, end: firstDate }; // start为null表示从年初开始
+    }
+    
+    // 检查数据内部相邻日期之间的间隔
     for (let i = 0; i < preciseDates.length - 1; i++) {
         const current = preciseDates[i];
         const next = preciseDates[i + 1];
@@ -424,9 +477,23 @@ function computeTimeStats(rows, year) {
         }
     }
     
+    // 检查从最后一个去世日期到年末的间隔
+    const yearEnd = new Date(year + 1, 0, 1); // 次年1月1日
+    const lastDate = preciseDates[preciseDates.length - 1];
+    const gapToEnd = Math.floor((yearEnd.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24)) - 1;
+    if (gapToEnd > maxGapDays) {
+        maxGapDays = gapToEnd;
+        maxGapRange = { start: lastDate, end: null }; // end为null表示到年末
+    }
+    
     return {
         maxDeathsInOneDay: maxDayCount > 0 ? { count: maxDayCount, dates: maxDays } : null,
         maxDeathsInOneWeek: maxWeekCount > 0 ? { count: maxWeekCount, weeks: maxWeeks } : null,
+        longestConsecutive: maxConsecutiveDays > 0 && maxConsecutiveRange ? {
+            days: maxConsecutiveDays,
+            start: maxConsecutiveRange.start,
+            end: maxConsecutiveRange.end
+        } : null,
         longestGap: maxGapDays > 0 && maxGapRange ? {
             days: maxGapDays,
             start: maxGapRange.start,
@@ -1147,7 +1214,7 @@ async function run() {
         const timeStats = computeTimeStats(rows, year);
 
         charts = renderCharts(panels, domMap, agg);
-        renderStats(panels, domMap, timeStats);
+        renderStats(panels, domMap, timeStats, year);
 
         // 仅保留一个 resize 监听，避免重复绑定
         if (resizeHandler !== null) {
@@ -1167,7 +1234,7 @@ async function run() {
         window.addEventListener('resize', resizeHandler, { passive: true });
     }
     
-    function renderStats(panels, domMap, timeStats) {
+    function renderStats(panels, domMap, timeStats, year) {
         for (const panelName of panels) {
             const def = PANEL_DEFS[panelName];
             if (!def || def.type !== 'stats') continue;
@@ -1176,15 +1243,15 @@ async function run() {
             if (!el) throw new Error(`[Viz] Stats dom missing for panel "${panelName}"`);
             
             if (def.id === 'timeStats') {
-                _renderTimeStats(el, timeStats);
+                _renderTimeStats(el, timeStats, year);
             }
         }
     }
     
-    function _renderTimeStats(container, stats) {
+    function _renderTimeStats(container, stats, year) {
         container.replaceChildren();
         
-        if (!stats.maxDeathsInOneDay && !stats.maxDeathsInOneWeek && !stats.longestGap && !stats.avgInterval) {
+        if (!stats.maxDeathsInOneDay && !stats.maxDeathsInOneWeek && !stats.longestConsecutive && !stats.longestGap && !stats.avgInterval) {
             container.textContent = '暂无数据';
             return;
         }
@@ -1251,24 +1318,19 @@ async function run() {
             frag.appendChild(item);
         }
         
-        // 3. 最长间隔
-        if (stats.longestGap) {
-            const { days, start, end } = stats.longestGap;
+        // 3. 最长连续有马匹去世天数
+        if (stats.longestConsecutive) {
+            const { days, start, end } = stats.longestConsecutive;
             const item = itemTpl.content.cloneNode(true);
             const labelEl = item.querySelector('.stats-item-label');
             const valueEl = item.querySelector('.stats-item-value');
             const detailEl = item.querySelector('.stats-item-detail');
             
-            labelEl.textContent = '最长无马匹去世间隔';
+            labelEl.textContent = '最长连续有马匹去世天数';
             valueEl.textContent = `${days} 天`;
             
-            const startDate = new Date(start);
-            startDate.setDate(startDate.getDate() + 1);
-            const endDate = new Date(end);
-            endDate.setDate(endDate.getDate() - 1);
-            
-            const startStr = _formatDate(startDate);
-            const endStr = _formatDate(endDate);
+            const startStr = _formatDate(start);
+            const endStr = _formatDate(end);
             
             const line = detailLineTpl.content.cloneNode(true);
             const p = line.querySelector('p');
@@ -1280,7 +1342,52 @@ async function run() {
             frag.appendChild(item);
         }
         
-        // 4. 平均间隔
+        // 4. 最长无马匹去世间隔
+        if (stats.longestGap) {
+            const { days, start, end } = stats.longestGap;
+            const item = itemTpl.content.cloneNode(true);
+            const labelEl = item.querySelector('.stats-item-label');
+            const valueEl = item.querySelector('.stats-item-value');
+            const detailEl = item.querySelector('.stats-item-detail');
+            
+            labelEl.textContent = '最长无马匹去世间隔';
+            valueEl.textContent = `${days} 天`;
+            
+            let rangeText;
+            if (start === null) {
+                // 从年初到第一个去世日期
+                const endDate = new Date(end);
+                endDate.setDate(endDate.getDate() - 1);
+                const endStr = _formatDate(endDate);
+                rangeText = `${year}-01-01 ~ ${endStr}`;
+            } else if (end === null) {
+                // 从最后一个去世日期到年末
+                const startDate = new Date(start);
+                startDate.setDate(startDate.getDate() + 1);
+                const startStr = _formatDate(startDate);
+                rangeText = `${startStr} ~ ${year}-12-31`;
+            } else {
+                // 数据内部的间隔
+                const startDate = new Date(start);
+                startDate.setDate(startDate.getDate() + 1);
+                const endDate = new Date(end);
+                endDate.setDate(endDate.getDate() - 1);
+                const startStr = _formatDate(startDate);
+                const endStr = _formatDate(endDate);
+                rangeText = `${startStr} ~ ${endStr}`;
+            }
+            
+            const line = detailLineTpl.content.cloneNode(true);
+            const p = line.querySelector('p');
+            
+            p.textContent = rangeText;
+            
+            detailEl.replaceChildren(line);
+            
+            frag.appendChild(item);
+        }
+        
+        // 5. 平均间隔
         if (stats.avgInterval !== null && stats.avgInterval !== undefined) {
             const item = itemTpl.content.cloneNode(true);
             const labelEl = item.querySelector('.stats-item-label');
