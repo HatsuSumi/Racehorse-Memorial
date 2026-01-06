@@ -29,15 +29,22 @@
   --detail           输出细分统计（按后缀名）
   --list-files       输出文件路径清单
   --log [FILE]       输出统计结果到 txt 文件
+  --markdown         生成 Markdown 格式输出（适合直接复制到 README.md）
 """
 
 from __future__ import annotations
 
 import argparse
+import io
 import os
 import sys
 import threading
 import time
+
+# 强制设置 stdout 为 UTF-8 编码，避免 Windows 下的 GBK 编码问题
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple, Callable
@@ -500,6 +507,58 @@ def fmt_bytes(n: int) -> str:
 def fmt_pct(x: float) -> str:
     # 一位小数，宽度对齐由外层控制
     return f"{x:5.1f}%"
+
+
+def adjust_percentages(values: List[float], total: float) -> List[float]:
+    """
+    使用最大余额法调整百分比，确保四舍五入后的总和恰好为 100.0%
+    
+    Args:
+        values: 原始数值列表
+        total: 总和
+    
+    Returns:
+        调整后的百分比列表（已四舍五入到小数点后1位）
+    """
+    if total == 0 or not values:
+        return [0.0] * len(values)
+    
+    # 计算原始百分比
+    raw_pcts = [(v / total * 100.0) for v in values]
+    
+    # 四舍五入到1位小数
+    rounded_pcts = [round(p, 1) for p in raw_pcts]
+    
+    # 计算总和与目标的差值
+    current_sum = sum(rounded_pcts)
+    diff = 100.0 - current_sum
+    
+    # 如果差值很小（±0.1%），则需要调整
+    if abs(diff) < 0.001:
+        return rounded_pcts
+    
+    # 计算每个值的余额（原始百分比 - 四舍五入后的百分比）
+    remainders = [(raw_pcts[i] - rounded_pcts[i], i) for i in range(len(values))]
+    
+    # 按余额排序（如果需要增加百分比，选择余额最大的；如果需要减少，选择余额最小的）
+    if diff > 0:
+        # 需要增加总和，选择被向下舍入最多的项（余额最大）
+        remainders.sort(reverse=True)
+    else:
+        # 需要减少总和，选择被向上舍入最多的项（余额最小）
+        remainders.sort()
+    
+    # 调整百分比
+    adjustments_needed = int(round(abs(diff) / 0.1))
+    for i in range(min(adjustments_needed, len(values))):
+        idx = remainders[i][1]
+        if diff > 0:
+            rounded_pcts[idx] += 0.1
+        else:
+            rounded_pcts[idx] -= 0.1
+        rounded_pcts[idx] = round(rounded_pcts[idx], 1)
+    
+    return rounded_pcts
 
 
 # ----------------------------
@@ -1506,6 +1565,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         default=None,
         help="生成 HTML 可视化报告（可选指定文件名；不带值默认 project_stats_report.html）",
     )
+    ap.add_argument("--markdown", action="store_true", help="生成 Markdown 格式输出（适合直接复制到 README.md）")
     args = ap.parse_args(argv)
 
     root = Path(args.path)
@@ -1619,11 +1679,17 @@ def main(argv: Optional[List[str]] = None) -> int:
     total_lines = sum(st.code_lines for _, st in rows)
     total_chars = sum(st.code_chars for _, st in rows)
 
+    # 调整百分比，确保总和为 100%
+    line_values = [st.code_lines for _, st in rows]
+    char_values = [st.code_chars for _, st in rows]
+    adjusted_line_pcts = adjust_percentages(line_values, total_lines)
+    adjusted_char_pcts = adjust_percentages(char_values, total_chars)
+
     # 输出每行
-    for t, st in rows:
+    for i, (t, st) in enumerate(rows):
         name = CODE_TYPE_LABELS.get(t, t)
-        line_pct = (st.code_lines / total_lines * 100.0) if total_lines else 0.0
-        char_pct = (st.code_chars / total_chars * 100.0) if total_chars else 0.0
+        line_pct = adjusted_line_pcts[i]
+        char_pct = adjusted_char_pcts[i]
 
         # 尽量贴近样例：
         # JavaScript  :  93 个文件, 18,848 行代码 ( 68.3%),   936,197 字符 ( 75.8%)
@@ -1691,7 +1757,84 @@ def main(argv: Optional[List[str]] = None) -> int:
             import traceback
             traceback.print_exc()
 
+    # ----------------------------
+    # 输出：Markdown 格式
+    # ----------------------------
+    if args.markdown:
+        print()
+        print("=" * 80)
+        print("Markdown 格式输出（可直接复制到 README.md）")
+        print("=" * 80)
+        print()
+        markdown_output = generate_markdown_output(res, total_code_files, total_lines, total_chars, rows)
+        print(markdown_output)
+        print()
+        print("=" * 80)
+
     return 0
+
+
+def generate_markdown_output(res, total_code_files: int, total_lines: int, total_chars: int, rows: List[Tuple[str, 'CodeStat']]) -> str:
+    """生成 Markdown 格式的统计输出"""
+    lines = []
+    
+    lines.append("## 📊 项目规模")
+    lines.append("")
+    lines.append("### 文件统计")
+    lines.append("")
+    
+    # 总文件数
+    total_all_files = res.total_files + res.asset_total_files
+    lines.append(f"- **总文件数**：{fmt_int(total_all_files)} 个")
+    
+    # 按文件类型排序（降序）
+    file_types = sorted(res.file_counts.items(), key=lambda kv: (-kv[1], kv[0]))
+    for t, cnt in file_types:
+        if cnt <= 0:
+            continue
+        label = FILE_TYPE_LABELS.get(t, t)
+        lines.append(f"  - {label}：{cnt} 个")
+    
+    lines.append("")
+    lines.append("### 代码规模")
+    lines.append("")
+    
+    # 调整百分比，确保总和为 100%
+    line_values = [st.code_lines for _, st in rows]
+    char_values = [st.code_chars for _, st in rows]
+    adjusted_line_pcts = adjust_percentages(line_values, total_lines)
+    adjusted_char_pcts = adjust_percentages(char_values, total_chars)
+    
+    # 代码总行数
+    lines.append(f"- **代码总行数**：{fmt_int(total_lines)} 行（不含空行、注释）")
+    for i, (t, st) in enumerate(rows):
+        name = CODE_TYPE_LABELS.get(t, t)
+        line_pct = adjusted_line_pcts[i]
+        lines.append(f"  - {name}：{fmt_int(st.code_lines)} 行（{fmt_pct(line_pct)}）")
+    
+    lines.append("")
+    
+    # 字符总数
+    lines.append(f"- **字符总数**：{fmt_int(total_chars)} 字符（不含注释）")
+    for i, (t, st) in enumerate(rows):
+        name = CODE_TYPE_LABELS.get(t, t)
+        char_pct = adjusted_char_pcts[i]
+        lines.append(f"  - {name}：{fmt_int(st.code_chars)} 字符（{fmt_pct(char_pct)}）")
+    
+    # 如果有资源文件统计
+    if res.asset_total_files > 0:
+        lines.append("")
+        lines.append("### 资源文件")
+        lines.append("")
+        lines.append(f"- **资源文件总数**：{res.asset_total_files} 个")
+        lines.append(f"- **资源文件总大小**：{fmt_bytes(res.asset_total_bytes)}")
+        
+        # 按大小排序
+        for k, st in sorted(res.asset_stats.items(), key=lambda kv: (-kv[1].bytes, kv[0])):
+            label = ASSET_TYPES.get(k, k)
+            lines.append(f"  - {label}：{st.files} 个文件，{fmt_bytes(st.bytes)}")
+    
+    return "\n".join(lines)
 
 
 def generate_html_report(data: Dict, output_path: Path) -> None:
@@ -2020,6 +2163,7 @@ class StatsGUI:
         self.detail_var = tk.BooleanVar(value=False)
         self.list_files_var = tk.BooleanVar(value=False)
         self.log_var = tk.BooleanVar(value=False)
+        self.markdown_var = tk.BooleanVar(value=False)
         self.status_var = tk.StringVar(value="就绪")
         
         self.analyzer: Optional[StatsAnalyzer] = None
@@ -2052,14 +2196,15 @@ class StatsGUI:
         opt_frame = ttk.LabelFrame(self.root, text="统计选项", padding="15")
         opt_frame.pack(fill=tk.X, padx=20, pady=10)
         
-        # 使用 Grid 让复选框排列整齐 (4行2列)
+        # 使用 Grid 让复选框排列整齐 (5行2列)
         ttk.Checkbutton(opt_frame, text="统计资源文件 (--assets)", variable=self.assets_var).grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
         ttk.Checkbutton(opt_frame, text="生成 HTML 报表 (--html)", variable=self.html_var).grid(row=0, column=1, sticky=tk.W, padx=10, pady=5)
         ttk.Checkbutton(opt_frame, text="输出细分统计 (--detail)", variable=self.detail_var).grid(row=1, column=0, sticky=tk.W, padx=10, pady=5)
         ttk.Checkbutton(opt_frame, text="输出文件清单 (--list-files)", variable=self.list_files_var).grid(row=1, column=1, sticky=tk.W, padx=10, pady=5)
         ttk.Checkbutton(opt_frame, text="导出日志文件 (--log)", variable=self.log_var).grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
-        ttk.Checkbutton(opt_frame, text="包含隐藏文件 (--include-hidden)", variable=self.include_hidden_var).grid(row=2, column=1, sticky=tk.W, padx=10, pady=5)
-        ttk.Checkbutton(opt_frame, text="包含 .git/node_modules (--no-ignore)", variable=self.no_ignore_var).grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
+        ttk.Checkbutton(opt_frame, text="生成 Markdown 格式 (--markdown)", variable=self.markdown_var).grid(row=2, column=1, sticky=tk.W, padx=10, pady=5)
+        ttk.Checkbutton(opt_frame, text="包含隐藏文件 (--include-hidden)", variable=self.include_hidden_var).grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
+        ttk.Checkbutton(opt_frame, text="包含 .git/node_modules (--no-ignore)", variable=self.no_ignore_var).grid(row=3, column=1, sticky=tk.W, padx=10, pady=5)
         
         # 3. 底部：行动区
         action_frame = ttk.Frame(self.root, padding="20 10 20 20")
@@ -2355,6 +2500,26 @@ class StatsGUI:
                     self.root.after(0, lambda: self._append_log(f"[+] 日志已保存: {log_path}"))
                 except Exception as e:
                     self.root.after(0, lambda: self._append_log(f"[!] 保存日志失败: {e}"))
+
+            # 生成 Markdown 格式（如果勾选）
+            if self.markdown_var.get():
+                self.root.after(0, lambda: self._append_log(""))
+                self.root.after(0, lambda: self._append_log("=" * 60))
+                self.root.after(0, lambda: self._append_log("Markdown 格式输出（可直接复制）"))
+                self.root.after(0, lambda: self._append_log("=" * 60))
+                self.root.after(0, lambda: self._append_log(""))
+                
+                rows = sorted(res.code_stats.items(), key=lambda kv: (-kv[1].code_lines, kv[0]))
+                total_code_files = sum(st.files for _, st in rows)
+                total_lines = sum(st.code_lines for _, st in rows)
+                total_chars = sum(st.code_chars for _, st in rows)
+                
+                markdown_output = generate_markdown_output(res, total_code_files, total_lines, total_chars, rows)
+                for line in markdown_output.split('\n'):
+                    self.root.after(0, lambda l=line: self._append_log(l))
+                
+                self.root.after(0, lambda: self._append_log(""))
+                self.root.after(0, lambda: self._append_log("=" * 60))
 
             self.root.after(0, lambda: self.status_var.set("统计完成"))
             
